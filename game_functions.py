@@ -2,9 +2,11 @@ import sys
 from time import sleep 
 import pygame
 from bullet import Bullet
-from alien import Alien			
+from alien import Alien	
 
-def check_keydown_events(event, ai_settings, screen, ship, bullets):
+filename = 'high_score.txt'		
+
+def check_keydown_events(event, ai_settings, screen, stats, ship, bullets):
 	"""Respond to keypresses."""
 	if event.key == pygame.K_RIGHT:
 		ship.moving_right = True
@@ -13,6 +15,8 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
 	elif event.key == pygame.K_SPACE:
 		fire_bullet(ai_settings, screen, ship, bullets)
 	elif event.key == pygame.K_q:
+		with open(filename, 'w') as file_object:
+			file_object.write(str(stats.high_score))
 		sys.exit()
 
 def fire_bullet(ai_settings, screen, ship, bullets):
@@ -33,9 +37,11 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bull
 	"""Respond to keypresses and mouse events."""
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
+			with open(filename, 'w') as file_object:
+				file_object.write(str(stats.high_score))
 			sys.exit()
 		elif event.type == pygame.KEYDOWN:
-			check_keydown_events(event, ai_settings, screen, ship, bullets)				
+			check_keydown_events(event, ai_settings, screen, stats, ship, bullets)				
 		elif event.type == pygame.KEYUP:
 			check_keyup_events(event, ship)
 		elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -59,10 +65,7 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship, aliens,
 		stats.game_active = True
 		
 		# Reset the scoreboard images.
-		sb.prep_score()
-		sb.prep_high_score()
-		sb.prep_level()
-		sb.prep_ships()
+		sb.prep_images()
 		
 		# Empty the list of aliens and bullets.
 		aliens.empty()
@@ -121,10 +124,13 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
 		ai_settings.increase_speed()
 		
 		# Increase level.
-		stats.level += 1
-		sb.prep_level()
+		start_new_level(stats, sb)
 		
 		create_fleet(ai_settings, screen, ship, aliens)
+		
+def start_new_level(stats, sb):
+	stats.level += 1
+	sb.prep_level()	
 
 def get_number_aliens_x(ai_settings, alien_width):
 	"""Determine the number of aliens that fit in a row."""
@@ -145,7 +151,7 @@ def create_alien(ai_settings, screen, aliens, alien_number, row_number):
 	alien_width = alien.rect.width
 	alien.x = alien_width + 2 * alien_width * alien_number
 	alien.rect.x = alien.x
-	alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+	alien.rect.y = 40 + alien.rect.height + 2 * alien.rect.height * row_number
 	aliens.add(alien)
 
 def create_fleet(ai_settings, screen, ship, aliens):
