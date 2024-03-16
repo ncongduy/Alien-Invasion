@@ -12,9 +12,16 @@ If the player shoots all the aliens, a new fleet appears that moves faster than 
 
 ## How to run project
 
-- Set up Python version 3.x.x
-- Set up Pygame
-- Run file alien_invasion.py
+- Install Python version 3.11.8
+- Create virtual env: `python3 -m venv .venv`
+- Activate virtual env: `source .venv/bin/activate`
+- Update pip: `pip install --upgrade pip setuptools wheel`
+- Install dependencies: `pip install -r requirements.txt`
+- Run game: `python3 alien_invasion.py`
+
+## Improved
+
+- Persistent high score of player  
 
 ## Demo
 ![Demo game](/images/alien-invasion.JPG)
